@@ -20,9 +20,16 @@ namespace FotonSoft
     /// </summary>
     public partial class MainWindow : Window
     {
+        FotonSoft.Web.SMHelper SMH;
         public MainWindow()
         {
             InitializeComponent();
+        }
+
+        private void button_Click(object sender, RoutedEventArgs e)
+        {
+            SMH = new Web.SMHelper("tresky");
+            SMH.generateMail();
         }
     }
 }
