@@ -38,10 +38,7 @@ namespace FotonSoft.Web
             {
                 driver.Quit();
             }
-            catch (Exception)
-            {
-                // Ignore errors if unable to close the browser
-            }
+            catch { }
         }
         /// <summary>
         /// алгоритм регистрации новой почты

@@ -37,7 +37,11 @@ namespace FotonSoft.Web
         {
             WB.Quit();
         }
-
+        /// <summary>
+        /// Алгоритм извлечения данных
+        /// </summary>
+        /// <param name="login"></param>
+        /// <param name="pass"></param>
         public void dataGetter(string login, string pass)
         {
             authorize(login, pass);
@@ -62,41 +66,24 @@ namespace FotonSoft.Web
         public void authorize(string login, string pass)
         {
             WB.Navigate().GoToUrl(URL_AliLoginPage);
-            IWebElement frame_login = WB.FindElement(By.TagName("iframe"));
+            IWebElement frame_login = getIWebElement(By.TagName("iframe"));
             WB.SwitchTo().Frame(frame_login);
-            IWebElement txt_login = WB.FindElement(By.Name("loginId"));
+            IWebElement txt_login = getIWebElement(By.Name("loginId"));
             txt_login.Clear();
             txt_login.SendKeys(login);
-            IWebElement txt_pass = WB.FindElement(By.Name("password"));
+            IWebElement txt_pass = getIWebElement(By.Name("password"));
             txt_pass.SendKeys(pass);
             txt_pass.SendKeys(OpenQA.Selenium.Keys.Return);
         }
-        
-        /// <summary>
-        /// Тут будет поочередный запуск всех пар логин/пароль
-        /// </summary>
-        /// <param name="KeyPassPair"></param>
-        // TODO Сделать реализацию перебора всех комбинаций логин/пароль.
-        /*public void Logins(Dictionary<string, string> KeyPassPair)
-        {
-            List<string> logs = KeyPassPair.Keys.ToList<string>();
-            //на время теста только первая пара
-            login(logs[0], KeyPassPair[logs[0]]);
-        }*/
+
         /// <summary>
         /// Закрытие окна приветсвия после удачного логина
         /// </summary>
         public void closeBoxAfterLogin()
         {
-            try
-            {
-                IWebElement btnBoxClose = WB.FindElement(By.Id("neverMind"));
+            IWebElement btnBoxClose = getIWebElement(By.Id("neverMind"));
+            if(btnBoxClose!=null)
                 btnBoxClose.Click();
-            }
-            catch (Exception)
-            {
-                //
-            }
         }
         /// <summary>
         /// переход в мои заказы
@@ -114,16 +101,14 @@ namespace FotonSoft.Web
             List<IWebElement> orderheads = WB.FindElements(By.CssSelector("tbody > tr.order-head")).ToList();
             foreach (IWebElement i in orderheads)
             {
-                IWebElement storeName = i.FindElement(By.CssSelector("td.store-info > p.first-row > span.info-body"));
-                IWebElement storeLink = i.FindElement(By.CssSelector("td.store-info > p.second-row > a"));
+                IWebElement storeName = getIWebElement(i, By.CssSelector("td.store-info > p.first-row > span.info-body"));
+                IWebElement storeLink = getIWebElement(i, By.CssSelector("td.store-info > p.second-row > a"));
 
                 StoreInfo si = new StoreInfo(storeName.Text, storeLink.GetAttribute("href"));
 
-                //IWebElement orderID = i.FindElement(By.CssSelector("td.order-info > p.first-row > span.info-body"));
-                string oid = (i.FindElement(By.CssSelector("td.order-info > p.first-row > span.info-body"))).Text;
-                IWebElement orderTime = i.FindElement(By.CssSelector("td.order-info > p.second-row > span.info-body"));
-                //IWebElement orderCost = i.FindElement(By.CssSelector("td.order-amount > div.amount-body > p.amount-num"));
-                string oc = (i.FindElement(By.CssSelector("td.order-amount > div.amount-body > p.amount-num"))).Text;
+                string oid = (getIWebElement(i, By.CssSelector("td.order-info > p.first-row > span.info-body"))).Text;
+                IWebElement orderTime = getIWebElement(i, By.CssSelector("td.order-info > p.second-row > span.info-body"));
+                string oc = (getIWebElement(i, By.CssSelector("td.order-amount > div.amount-body > p.amount-num"))).Text;
 
                 OrderInfoList.Add(new OrderInfo(oid, orderTime.Text, oc, si));
             }
@@ -135,7 +120,7 @@ namespace FotonSoft.Web
             List<IWebElement> productTBodies = WB.FindElements(By.CssSelector("tbody > tr.order-body")).ToList();
             foreach (IWebElement i in productTBodies)
             {
-                IWebElement info = i.FindElement(By.CssSelector("td.product-sets > div.product-right > p.product-snapshot > a"));
+                IWebElement info = getIWebElement(i, By.CssSelector("td.product-sets > div.product-right > p.product-snapshot > a"));
                 string productTitle = info.GetAttribute("title");
                 string productid = info.GetAttribute("productid");
                 string productSnapshotLink = info.GetAttribute("href");
@@ -147,7 +132,7 @@ namespace FotonSoft.Web
                 List<IWebElement> productProperty = i.FindElements(By.CssSelector("td.product-sets > div.product-right > p.product-proprty > span > span.val")).ToList();
                 string property = productProperty[0].Text +" + "+ productProperty[1].Text;
 
-                IWebElement order_action = i.FindElement(By.CssSelector("td.order-action"));
+                IWebElement order_action = getIWebElement(i, By.CssSelector("td.order-action"));
                 string orderid = order_action.GetAttribute("orderid");
 
                 //StoreInfo si = new StoreInfo(storeName.Text, storeLink.GetAttribute("href"));
@@ -159,7 +144,7 @@ namespace FotonSoft.Web
         public void openHomePage()
         {
             WB.Navigate().GoToUrl(URL_AliHomePage);
-            if (WB.FindElement(By.ClassName("ui-window-close")) != null) closeBoxAfterLogin();
+            if (getIWebElement(By.ClassName("ui-window-close")) != null) closeBoxAfterLogin();
         }
         /// <summary>
         /// Закрыть текущую учетную запись
@@ -167,11 +152,11 @@ namespace FotonSoft.Web
         public void logout()
         {
             WB.Navigate().GoToUrl(URL_AliLogoutPage);
-            //WB.FindElement(By.LinkText("Выйти")).Click();
         }
+
         private void wait(int min, int max)
         {
-            Thread.Sleep(rnd.Next(900, 1100) * rnd.Next(min, max));
+            Thread.Sleep(1000 * rnd.Next(min, max));
         }
         public Dictionary<string, string> accessDict()
         {
@@ -208,6 +193,23 @@ namespace FotonSoft.Web
             }
 
         }
-
+        /// <summary>
+        /// Получение IWebElement
+        /// Костыль, избавляющий от вылетов при прямом запросе на IWebElement, 
+        /// которого нет или еще не загружен
+        /// (перехват исключения тут бесполезен)
+        /// </summary>
+        /// <param name="by"></param>
+        /// <returns></returns>
+        private IWebElement getIWebElement( By by )
+        {
+            List<IWebElement> founded = WB.FindElements(by).ToList();
+            return founded.Count > 0 ? founded[0] : null;
+        }
+        private IWebElement getIWebElement(IWebElement element, By by)
+        {
+            List<IWebElement> founded = element.FindElements(by).ToList();
+            return founded.Count > 0 ? founded[0] : null;
+        }
     }
 }
