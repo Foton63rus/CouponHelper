@@ -21,15 +21,25 @@ namespace FotonSoft
     public partial class MainWindow : Window
     {
         FotonSoft.Web.SMHelper SMH;
+        FotonSoft.Web.AliHelper AEH;
         public MainWindow()
         {
             InitializeComponent();
         }
 
-        private void button_Click(object sender, RoutedEventArgs e)
+        private void buttonMailGenerator_Click(object sender, RoutedEventArgs e)
         {
             SMH = new Web.SMHelper("tresky");
             SMH.generateMail();
         }
-    }
+        private void buttonLogin_Click(object sender, RoutedEventArgs e)
+        {
+            AEH = new Web.AliHelper();
+            
+            //AEH.dataGetter("Trve.man.rom.5@scryptmail.com", "1qazQAZ");
+            AEH.dataGetter("Trve.man.rom.4@scryptmail.com", "1qazQAZ");
+
+        }
+    } 
+
 }

@@ -16,7 +16,7 @@
             </LinearGradientBrush>
         </Grid.Background>
         <Button x:Name="button" Content="MailGenerator" HorizontalAlignment="Center" Height="69" 
-                VerticalAlignment="Center" Width="113" Click="button_Click" FontSize="16">
+                VerticalAlignment="Center" Width="113" Click="buttonMailGenerator_Click" FontSize="16" Margin="88,136,316,114">
             <Button.Background>
                 <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
                     <LinearGradientBrush.RelativeTransform>
@@ -33,6 +33,23 @@
             </Button.Background>
         </Button>
         <Grid HorizontalAlignment="Left" Height="299" Margin="10,10,-1,0" VerticalAlignment="Top" Width="497"/>
+        <Button x:Name="button_Copy" Content="Login" HorizontalAlignment="Center" Height="69" 
+            VerticalAlignment="Center" Width="113" Click="buttonLogin_Click" FontSize="16" Margin="273,136,131,114">
+            <Button.Background>
+                <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
+                    <LinearGradientBrush.RelativeTransform>
+                        <TransformGroup>
+                            <ScaleTransform CenterY="0.5" CenterX="0.5"/>
+                            <SkewTransform AngleY="0" CenterY="0.5" CenterX="0.5"/>
+                            <RotateTransform CenterY="0.5" CenterX="0.5"/>
+                            <TranslateTransform/>
+                        </TransformGroup>
+                    </LinearGradientBrush.RelativeTransform>
+                    <GradientStop Color="#FFC7C7C7" Offset="1"/>
+                    <GradientStop Color="#FF8D9DB8"/>
+                </LinearGradientBrush>
+            </Button.Background>
+        </Button>
 
     </Grid>
 </Window>
