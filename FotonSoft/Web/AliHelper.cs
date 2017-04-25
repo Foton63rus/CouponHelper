@@ -10,7 +10,7 @@ using FotonSoft.Entities;
 
 namespace FotonSoft.Web
 {
-    public class AliHelper
+    public class AliHelper : Interfaces.IProductLoader
     {
         private IWebDriver WB;
         private string URL_AliStartPage     => "https://ru.aliexpress.com";
@@ -19,6 +19,10 @@ namespace FotonSoft.Web
         private string URL_AliLoginPage     => "https://login.aliexpress.com/?flag=1&return_url=http%3A%2F%2Fhome.aliexpress.com%2Findex.htm%3Fspm%3D2114.11020108.1000002.6.UUq7GF%26tracelog%3Dws_topbar";
         private string URL_AliLogoutPage    => "https://login.aliexpress.com/xman/xlogout.htm?return_url=https%3A%2F%2Fhome.aliexpress.com%2Findex.htm";
         Random rnd;
+
+        List<OrderInfo> OrderInfoList = new List<OrderInfo>() { };
+        List<ProductInfo> ProductInfoList = new List<ProductInfo>() { };
+
         public AliHelper()
         {
             if (WB == null) WB = new OpenQA.Selenium.Chrome.ChromeDriver();
@@ -53,6 +57,7 @@ namespace FotonSoft.Web
             //
             // этот метод еще не рабочий
             getOrderData();
+            getProductInfoList();
             //
             wait(2, 4);
             logout();
@@ -97,7 +102,6 @@ namespace FotonSoft.Web
         /// </summary>
         private List<OrderInfo> getOrderData()
         {
-            List<OrderInfo> OrderInfoList = new List<OrderInfo>() { };
             List<IWebElement> orderheads = WB.FindElements(By.CssSelector("tbody > tr.order-head")).ToList();
             foreach (IWebElement i in orderheads)
             {
@@ -110,13 +114,13 @@ namespace FotonSoft.Web
                 IWebElement orderTime = getIWebElement(i, By.CssSelector("td.order-info > p.second-row > span.info-body"));
                 string oc = (getIWebElement(i, By.CssSelector("td.order-amount > div.amount-body > p.amount-num"))).Text;
 
+                //TODO понадобиться проверка от добавления копий
                 OrderInfoList.Add(new OrderInfo(oid, orderTime.Text, oc, si));
             }
             return OrderInfoList;
         }
-        private void getProductData(List<StoreInfo> StoreInfoList)
+        public List<ProductInfo> getProductInfoList()
         {
-            List<ProductInfo> ProductInfoList = new List<ProductInfo>() { };
             List<IWebElement> productTBodies = WB.FindElements(By.CssSelector("tbody > tr.order-body")).ToList();
             foreach (IWebElement i in productTBodies)
             {
@@ -124,6 +128,9 @@ namespace FotonSoft.Web
                 string productTitle = info.GetAttribute("title");
                 string productid = info.GetAttribute("productid");
                 string productSnapshotLink = info.GetAttribute("href");
+
+                IWebElement pic = getIWebElement(i, By.CssSelector("td.product-sets > div.product-left > a > img"));
+                string picLink = info.GetAttribute("src");
 
                 List<IWebElement> productAmount = i.FindElements(By.CssSelector("td.product-sets > div.product-right > p.product-amount > span")).ToList();
                 string amount = productAmount[0].Text;
@@ -134,9 +141,15 @@ namespace FotonSoft.Web
 
                 IWebElement order_action = getIWebElement(i, By.CssSelector("td.order-action"));
                 string orderid = order_action.GetAttribute("orderid");
+                OrderInfo order = OrderInfoList.Where(x => x.ID == orderid).ToList()[0];
+
+
+                addNewProduct(new ProductInfo(productid, productTitle, productSnapshotLink, picLink, amount, count, order));
+
 
                 //StoreInfo si = new StoreInfo(storeName.Text, storeLink.GetAttribute("href"));
             }
+            return ProductInfoList;
         }
         /// <summary>
         /// Открыть домашнюю страницу и закрыть окно приветствия
@@ -158,6 +171,8 @@ namespace FotonSoft.Web
         {
             Thread.Sleep(1000 * rnd.Next(min, max));
         }
+
+        //TODO убрать это в IO
         public Dictionary<string, string> accessDict()
         {
             string path = System.IO.Directory.GetCurrentDirectory() + @"\access.txt";
@@ -192,6 +207,12 @@ namespace FotonSoft.Web
                 return null;
             }
 
+        }
+        private void addNewProduct( ProductInfo product)
+        {
+            List<ProductInfo> tmplist = ProductInfoList.Where(x => x.ProductID == product.ProductID).ToList();
+            if ( !(tmplist.Count > 0) )
+                ProductInfoList.Add(product);
         }
         /// <summary>
         /// Получение IWebElement

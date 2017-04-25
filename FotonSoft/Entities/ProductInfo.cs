@@ -14,6 +14,7 @@ namespace FotonSoft.Entities
         public string PicLink { get; private set; }
         public string ProductCost { get; private set; }
         public string ProductAmount { get; private set; }
+        public OrderInfo Order { get; private set; }
 
         public ProductInfo(
             string productID,
@@ -21,7 +22,8 @@ namespace FotonSoft.Entities
             string webLink,
             string picLink,
             string productCost,
-            string productAmount
+            string productAmount,
+            OrderInfo order
             )
         {
             Title = title;
@@ -30,6 +32,7 @@ namespace FotonSoft.Entities
             ProductID = productID;
             ProductAmount = productAmount;
             ProductCost = productCost;
+            Order = order;
         }
     }
 }

@@ -1,17 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using FotonSoft.Interfaces;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 
 namespace FotonSoft
 {
@@ -20,7 +8,7 @@ namespace FotonSoft
     /// </summary>
     public partial class MainWindow : Window
     {
-        FotonSoft.Web.SMHelper SMH;
+        IMailGenerator MailGenerator;
         FotonSoft.Web.AliHelper AEH;
         public MainWindow()
         {
@@ -29,8 +17,8 @@ namespace FotonSoft
 
         private void buttonMailGenerator_Click(object sender, RoutedEventArgs e)
         {
-            SMH = new Web.SMHelper("tresky");
-            SMH.generateMail();
+            MailGenerator = new Web.SMHelper("tresky");
+            MailGenerator.generateMail();
         }
         private void buttonLogin_Click(object sender, RoutedEventArgs e)
         {

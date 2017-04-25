@@ -7,7 +7,7 @@ using System.IO;
 
 namespace FotonSoft.Web
 {
-    class SMHelper
+    class SMHelper : Interfaces.IMailGenerator
     {
         private IWebDriver driver;
         private string baseURL;
@@ -17,6 +17,8 @@ namespace FotonSoft.Web
         private string pathLogs;
         private string pathLP;
         private string tmp;
+        string login;
+        string pass;
         public SMHelper(string template = "TRVEMAN")
         {
             OpenQA.Selenium.Chrome.ChromeDriverService service = OpenQA.Selenium.Chrome.ChromeDriverService.CreateDefaultService();
@@ -46,9 +48,9 @@ namespace FotonSoft.Web
         public void generateMail()
         {
             int i = Math.Abs((System.DateTime.Now.ToString()).GetHashCode());
-            string login = tmp + i.ToString();
+            login = tmp + i.ToString();
             i = Math.Abs(login.GetHashCode());
-            string pass = "Sm" + i.ToString();
+            pass = "Sm" + i.ToString();
             try
             {
                 log("new generating " + DateTime.Now.ToString());
@@ -283,6 +285,11 @@ namespace FotonSoft.Web
         {
             if (!File.Exists(pathLP))
                 File.Create(pathLP);
+        }
+
+        public void saveLoginPassPair()
+        {
+            throw new NotImplementedException();
         }
     }
 }
